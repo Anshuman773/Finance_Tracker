@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <title>Finance Tracker - A Personal Finance App</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+  />
+</head>
+<body>
+  <nav>
+    <div class="navbar">
+      <a href="#" class="logo"><i class="fas fa-chart-line"></i> Finance Tracker</a>
+      <ul class="nav-links">
+        <li><a href="#">Home</a></li>
+        <li><a href="#tracker">Use Tracker</a></li>
+        <li><a href="#how-it-works">How it works</a></li>
+        <li><a href="./support.html">Support</a></li>
+      </ul>
+      <div class="buttons">
+        <a href="./login.html" class="btn-head"><i class="fas fa-sign-in-alt"></i> Log In</a>
+        <a href="./sign-up.html" class="btn-head"><i class="fas fa-user-plus"></i> Sign Up</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="section-box" id="tracker">
+    <h1>Access Your Personal Finance Tracker</h1>
+    <div class="tracker-part">
+      <div class="tracker-balance">
+        Current Balance: <span id="balance" class="current-balance">0</span>
+      </div>
+
+      <div class="currency-filter">
+        <label for="currency">Currency:</label>
+        <select id="currency" onchange="updateBalance()">
+          <option value="USD">USD</option>
+          <option value="EUR">EUR</option>
+          <option value="INR" selected>INR</option>
+        </select>
+      </div>
+
+      <div class="transaction-form">
+        <input type="date" id="date" placeholder="Date" />
+        <input type="text" id="description" placeholder="Description" />
+        <input type="number" id="amount" placeholder="Amount" />
+        <select id="type">
+          <option value="income">Income</option>
+          <option value="expense">Expense</option>
+        </select>
+        <button onclick="addTransaction()">Add Transaction</button>
+      </div>
+
+      <div class="table-part">
+        <table id="transaction-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Description</th>
+              <th>Amount</th>
+              <th>Type</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="transaction-body">
+            <!-- Transactions will appear here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    let transactions = [];
+    let balance = 0;
+
+    function updateBalance() {
+      const currency = document.getElementById('currency').value;
+      document.getElementById('balance').innerText = `${balance} ${currency}`;
+    }
+
+    function addTransaction() {
+      const date = document.getElementById('date').value;
+      const description = document.getElementById('description').value;
+      const amount = Number(document.getElementById('amount').value);
+      const type = document.getElementById('type').value;
+
+      const transaction = {
+        date,
+        description,
+        amount,
+        type
+      };
+
+      if (type === 'income') {
+        balance += amount;
+      } else {
+        balance -= amount;
+      }
+
+      transactions.push(transaction);
+      displayTransaction(transaction);
+      updateBalance();
+    }
+
+    function displayTransaction(transaction) {
+      const tableBody = document.getElementById('transaction-body');
+      const newRow = document.createElement('tr');
+
+      newRow.innerHTML = `
+        <td>${transaction.date}</td>
+        <td>${transaction.description}</td>
+        <td>${transaction.amount}</td>
+        <td>${transaction.type}</td>
+        <td><button onclick="deleteTransaction(this)">Delete</button></td>
+      `;
+      tableBody.appendChild(newRow);
+    }
+
+    function deleteTransaction(button) {
+      const row = button.parentElement.parentElement;
+      const amount = Number(row.children[2].innerText);
+      const type = row.children[3].innerText;
+
+      if (type === 'income') {
+        balance -= amount;
+      } else {
+        balance += amount;
+      }
+
+      row.remove();
+      updateBalance();
+    }
+
+  </script>
+</body>
+</html>
